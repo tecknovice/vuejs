@@ -1,21 +1,23 @@
-# todo
-
-## Project setup
+#install nodeJS v8.11.2
+#install git
+#git clone 
 ```
-npm install
+git clone https://github.com/tecknovice/vuejs
+cd vuejs/todo
 ```
-
-### Compiles and hot-reloads for development
+#install @vue/cli client package
+```
+npm install --global @vue/cli
+```
+#install bootstrap
+```
+npm install bootstrap@4.0.0
+```
+#run todo app
 ```
 npm run serve
 ```
-
-### Compiles and minifies for production
+#access todo app
 ```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
+http://localhost:8080
 ```
