@@ -38,6 +38,7 @@ export default {
     this.$refs["my-canvas"].height = this.$refs[
       "my-canvas"
     ].parentElement.clientHeight;
+    // console.log(this.$refs["my-canvas"]);
   }
 };
 </script>
