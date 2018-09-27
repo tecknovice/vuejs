@@ -56,7 +56,7 @@ export default {
 
     // Draw the new rectangle.
     ctx.rect(newBox.x,newBox.y, newBox.w, newBox.h);
-    ctx.fillStyle = "green";
+    ctx.fillStyle = "#08F";
     ctx.fill();
 
 

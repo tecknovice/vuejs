@@ -9,12 +9,7 @@ export default {
     return {
       // We cache the dimensions of the previous
       // render so that we can clear the area later.
-      oldBox: {
-        x: null,
-        y: null,
-        w: null,
-        h: null
-      }
+      oldBricks: []
     };
   },
 
@@ -23,16 +18,22 @@ export default {
       const ctx = this.provider.context;
 
       // Turn start / end percentages into x, y, width, height in pixels.
-      const calculated = {
-        x: this.paddle.x,
-        y: this.paddle.y,
-        w: this.paddle.w,
-        h: this.paddle.h
-      };
+      const calculated = [];
+      let i, j;
+      for (i = 0; i < this.bricks.length; i++) {
+        let bricks_row = this.bricks[i];
+        let cal_row = [];
+        for (j = 0; j < bricks_row.length; j++) {
+          let brick = bricks_row[j];
+          let clone = cloneBrick(brick);
+          cal_row.push(clone);
+        }
+        calculated.push(cal_row);
+      }
 
       // Yes yes, side-effects. This lets us cache the box dimensions of the previous render.
       // before we re-calculate calculatedBox the next render.
-      this.oldBox = calculated;
+      this.oldBricks = calculated;
       return calculated;
     }
   },
@@ -40,34 +41,45 @@ export default {
   render() {
     // Since the parent canvas has to mount first, it's *possible* that the context may not be
     // injected by the time this render function runs the first time.
-    // if (!this.provider.context) return;
-    // const ctx = this.provider.context;
-
-    // // Keep a reference to the box used in the previous render call.
-    // const oldBox = this.oldBox;
-    // // Calculate the new box. (Computed properties update on-demand.)
-    // const newBox = this.calculatedBox;
-
-    // ctx.beginPath();
-    // // Clear the old area from the previous render.
-    // ctx.clearRect(oldBox.x, oldBox.y, oldBox.w, oldBox.h);
-
-    // // Draw the new rectangle.
-    // ctx.rect(newBox.x,newBox.y, newBox.w, newBox.h);
-    // ctx.fillStyle = this.color;
-    // ctx.fill();
-
     if (!this.provider.context) return;
     const ctx = this.provider.context;
+
+    // Keep a reference to the box used in the previous render call.
+    const oldBricks = this.oldBricks;
+    // Calculate the new box. (Computed properties update on-demand.)
+    const newBricks = this.calculatedBox;
+
+    ctx.beginPath();
     let i, j;
-    for (i = 0; i < this.bricks.length; i++) {
-      let bricks_row = this.bricks[i];
+    // Clear the old area from the previous render.
+    for (i = 0; i < oldBricks.length; i++) {
+      let bricks_row = oldBricks[i];
+      for (j = 0; j < bricks_row.length; j++) {
+        let brick = bricks_row[j];
+        ctx.clearRect(brick.x - 1, brick.y - 1, brick.w + 2, brick.h + 2);
+      }
+    }
+    // Draw the new rectangle.
+    // ctx.rect(newBox.x,newBox.y, newBox.w, newBox.h);
+
+    for (i = 0; i < newBricks.length; i++) {
+      let bricks_row = newBricks[i];
       for (j = 0; j < bricks_row.length; j++) {
         let brick = bricks_row[j];
         ctx.rect(brick.x, brick.y, brick.w, brick.h);
-        ctx.stroke();
+        ctx.fillStyle = "#08F";
+        ctx.fill();
       }
     }
+    // console.log(this.bricks);
   }
 };
+function cloneBrick(brick) {
+  let clone = new Object();
+  clone.x = brick.x;
+  clone.y = brick.y;
+  clone.w = brick.w;
+  clone.h = brick.h;
+  return clone;
+}
 </script>

@@ -15,7 +15,7 @@
 <script>
 //canvas
 const W = 1000;
-const H = 600;
+const H = 700;
 //ball
 const ball_radius = 25;
 let dx = 5;
@@ -50,14 +50,13 @@ export default {
         x: W / 2 - paddle_w / 2,
         y: H - paddle_h,
         w: paddle_w,
-        h: paddle_h,
-        color: "red"
+        h: paddle_h
       },
       ball: {
         x: W / 2,
         y: H - paddle_h - ball_radius,
         r: ball_radius,
-        color: "green"
+        color: getRandomColor()
       },
       bricks: [
         [
@@ -99,6 +98,7 @@ export default {
     setInterval(() => {
       checkPaddleCollision(this.ball, this.paddle);
       checkBorderCollision(this.ball);
+      checkBricksCollision(this.ball, this.bricks);
       this.ball.x += dx;
       this.ball.y += dy;
     }, 16);
@@ -144,13 +144,57 @@ function checkPaddleCollision(ball, paddle) {
 
 function checkBricksCollision(ball, bricks) {
   let i, j, bricks_row, brick;
-  for (i = 0; i < this.bricks.length; i++) {
-     bricks_row = this.bricks[i];
+  for (i = 0; i < bricks.length; i++) {
+    bricks_row = bricks[i];
     for (j = 0; j < bricks_row.length; j++) {
       brick = bricks_row[j];
-      
+      if (
+        ball.y + ball.r >= brick.y &&
+        ball.y + ball.r < brick.y + brick.h &&
+        ball.x >= brick.x &&
+        ball.x <= brick.x + brick.w
+      ) {
+        dy = -dy;
+        bricks_row.splice(j, 1);
+        ball.color = getRandomColor();
+      } else if (
+        ball.y - ball.r <= brick.y + brick.h &&
+        ball.y - ball.r > brick.y &&
+        ball.x >= brick.x &&
+        ball.x <= brick.x + brick.w
+      ) {
+        dy = -dy;
+        bricks_row.splice(j, 1);
+        ball.color = getRandomColor();
+      } else if (
+        ball.x + ball.r >= brick.x &&
+        ball.x + ball.r < brick.x + brick.w &&
+        ball.y >= brick.y &&
+        ball.y <= brick.y + brick.h
+      ) {
+        dx = -dx;
+        bricks_row.splice(j, 1);
+        ball.color = getRandomColor();
+      } else if (
+        ball.x - ball.r <= brick.x + brick.w &&
+        ball.x - ball.r > brick.x &&
+        ball.y >= brick.y &&
+        ball.y <= brick.y + brick.h
+      ) {
+        dx = -dx;
+        bricks_row.splice(j, 1);
+        ball.color = getRandomColor();
+      }
     }
   }
+}
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 }
 </script>
 
@@ -170,7 +214,7 @@ h2 {
 }
 .my-canvas-wrapper {
   width: 100%;
-  height: 600px;
+  height: 700px;
   border: 1px solid;
 }
 

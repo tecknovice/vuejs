@@ -54,7 +54,7 @@ export default {
     // Draw the new rectangle.
     ctx.beginPath();
     ctx.arc(newBox.x, newBox.y, newBox.r, 0, 2 * Math.PI);
-    ctx.fillStyle = "blue";
+    ctx.fillStyle = newBox.color;
     ctx.fill();
     ctx.stroke();
     ctx.closePath();
