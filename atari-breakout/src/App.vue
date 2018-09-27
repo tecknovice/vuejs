@@ -1,6 +1,11 @@
 <template>
   <div id="app">
-    <div>Atari Breakout</div>
+    <div class="header">
+    <div class="left" ref="score"></div>
+    <div class="left" >Atari Breakout</div>
+    <div class="left" ref="lives"></div>
+    <div class="clear"></div>
+    </div>
     <!-- These are the custom components we'll create -->
     <!-- Values for `my-box` are percentages of the width of the canvas. -->
     <!-- Each bar will take up an equal space of the canvas. -->
@@ -15,6 +20,9 @@
 <script>
 // unit size
 const unit = 20;
+//score and lives
+let score = 0;
+let lives = 5;
 //canvas
 const W = 600;
 const H = 700;
@@ -76,9 +84,11 @@ export default {
     setInterval(() => {
       checkBricksCollision(this.ball, this.bricks);
       checkPaddleCollision(this.ball, this.paddle);
-      checkBorderCollision(this.ball);
+      checkBorderCollision(this.ball, this.paddle);
       this.ball.x += dx;
       this.ball.y += dy;
+      this.$refs["score"].innerText = "Score: " + score;
+      this.$refs["lives"].innerText = "Lives: " + lives;
     }, 16);
   },
   methods: {
@@ -102,9 +112,39 @@ export default {
       if (relativeX > 0 && relativeX < W) {
         this.paddle.x = relativeX - this.paddle.w / 2;
       }
+    },
+    reset: function() {
+      this.paddle = {
+        x: W / 2 - paddle_w / 2,
+        y: H - paddle_h,
+        w: paddle_w,
+        h: paddle_h,
+        color: "#08F"
+      };
+      this.ball = {
+        x: W / 2,
+        y: H - paddle_h - ball_radius,
+        r: ball_radius,
+        color: "#08F"
+      };
     }
   }
 };
+// function reset(ball, paddle) {
+//   paddle = {
+//     x: W / 2 - paddle_w / 2,
+//     y: H - paddle_h,
+//     w: paddle_w,
+//     h: paddle_h,
+//     color: "#08F"
+//   };
+//   ball = {
+//     x: W / 2,
+//     y: H - paddle_h - ball_radius,
+//     r: ball_radius,
+//     color: "#08F"
+//   };
+// }
 function generateRandomBricks(appear_rate) {
   let rows = W / bw;
   let cols = H / bh;
@@ -128,15 +168,21 @@ function generateRandomBricks(appear_rate) {
   }
   return bricks;
 }
-function checkBorderCollision(ball) {
+function checkBorderCollision(ball, paddle) {
   if (ball.x + ball.r > W) {
     dx = -dx;
   }
   if (ball.x - ball.r < 0) {
     dx = -dx;
   }
-  if (ball.y + ball.r > H) {
+  if (ball.y + ball.r + dy > H) {
     // dy = -dy;
+    // lives -= 1;
+    // if (lives == 0) {
+    //   alert("You lose. Score: " + score);
+    // } else {
+    //   this.reset();
+    // }
   }
   if (ball.y - ball.r < 0) {
     dy = -dy;
@@ -168,6 +214,7 @@ function checkBricksCollision(ball, bricks) {
         dy = -dy;
         ball.color = brick.color;
         bricks_row.splice(j, 1);
+        score += 1;
       } else if (
         ball.y - ball.r <= brick.y + brick.h &&
         ball.y - ball.r > brick.y &&
@@ -177,6 +224,7 @@ function checkBricksCollision(ball, bricks) {
         dy = -dy;
         ball.color = brick.color;
         bricks_row.splice(j, 1);
+        score += 1;
       } else if (
         ball.x + ball.r >= brick.x &&
         ball.x + ball.r < brick.x + brick.w &&
@@ -186,6 +234,7 @@ function checkBricksCollision(ball, bricks) {
         dx = -dx;
         ball.color = brick.color;
         bricks_row.splice(j, 1);
+        score += 1;
       } else if (
         ball.x - ball.r <= brick.x + brick.w &&
         ball.x - ball.r > brick.x &&
@@ -195,6 +244,7 @@ function checkBricksCollision(ball, bricks) {
         dx = -dx;
         ball.color = brick.color;
         bricks_row.splice(j, 1);
+        score += 1;
       }
     }
   }
@@ -220,13 +270,21 @@ function getRandomColor() {
   width: 602px;
   margin: auto;
 }
-h2 {
+.header {
+  width: 100%;
+}
+.left {
   text-align: center;
+  float: left;
+  width: 33.3333%;
+  height: 100%;
 }
 .my-canvas-wrapper {
   width: 100%;
   height: 702px;
-  border: 1px solid #08F;
+  border: 1px solid #08f;
 }
-
+.clear {
+  clear: both;
+}
 </style>
