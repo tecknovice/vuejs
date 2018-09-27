@@ -49,22 +49,24 @@ export default {
     const newBox = this.calculatedBox;
 
     // Clear the old area from the previous render.
-    ctx.clearRect(oldBox.x-oldBox.r-1, oldBox.y-oldBox.r-1, 2*oldBox.r+2, 2*oldBox.r+2);
+    ctx.clearRect(
+      oldBox.x - oldBox.r,
+      oldBox.y - oldBox.r,
+      2 * oldBox.r,
+      2 * oldBox.r
+    );
+    // clearArc(ctx, oldBox.x, oldBox.y, oldBox.r);
 
     // Draw the new rectangle.
     ctx.beginPath();
     ctx.arc(newBox.x, newBox.y, newBox.r, 0, 2 * Math.PI);
     ctx.fillStyle = newBox.color;
     ctx.fill();
-    ctx.stroke();
     ctx.closePath();
   }
 };
 function clearArc(ctx, x, y, r) {
-  // ctx.beginPath();
-  ctx.arc(x, y, r, 0, 2 * Math.PI, true);
-  ctx.stroke();
-  // ctx.closePath();
-  ctx.globalCompositeOperation = 'source-in'
+  ctx.clip();
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
 </script>

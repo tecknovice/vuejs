@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <h2>Atari Breakout</h2>
+    <div>Atari Breakout</div>
     <!-- These are the custom components we'll create -->
     <!-- Values for `my-box` are percentages of the width of the canvas. -->
     <!-- Each bar will take up an equal space of the canvas. -->
-    <my-canvas >
+    <my-canvas ref="the-canvas">
       <my-paddle :paddle = "paddle"></my-paddle>
       <my-ball :ball = "ball"></my-ball>
       <my-bricks :bricks = "bricks"></my-bricks>
@@ -13,23 +13,24 @@
 </template>
 
 <script>
+// unit size
+const unit = 20;
 //canvas
-const W = 1000;
+const W = 600;
 const H = 700;
 //ball
-const ball_radius = 25;
+const ball_radius = unit / 2;
 let dx = 5;
 let dy = 5;
 //brick
-const bw = 150;
-const bh = 50;
-const sx = 75;
-const sy = 50;
-const p = 15;
+const bw = 2 * unit;
+const bh = unit;
+const p = 1;
+const appear_rate = 0.5;
 //paddle
-const paddle_w = 150;
-const paddle_h = 10;
-const speed = 50;
+const paddle_w = 5 * unit;
+const paddle_h = unit / 2;
+const speed = unit;
 import MyCanvas from "./Components/MyCanvas.vue";
 import MyPaddle from "./Components/MyPaddle.vue";
 import MyBall from "./Components/MyBall.vue";
@@ -50,55 +51,32 @@ export default {
         x: W / 2 - paddle_w / 2,
         y: H - paddle_h,
         w: paddle_w,
-        h: paddle_h
+        h: paddle_h,
+        color: "#08F"
       },
       ball: {
         x: W / 2,
         y: H - paddle_h - ball_radius,
         r: ball_radius,
-        color: getRandomColor()
+        color: "#08F"
       },
-      bricks: [
-        [
-          { x: sx, y: sy, w: bw, h: bh },
-          { x: sx + bw + p, y: sy, w: bw, h: bh },
-          { x: sx + 2 * (bw + p), y: sy, w: bw, h: bh },
-          { x: sx + 3 * (bw + p), y: sy, w: bw, h: bh },
-          { x: sx + 4 * (bw + p), y: sy, w: bw, h: bh }
-        ],
-        [
-          { x: sx, y: 2 * sy + p, w: bw, h: bh },
-          { x: sx + (bw + p), y: 2 * sy + p, w: bw, h: bh },
-          { x: sx + 2 * (bw + p), y: 2 * sy + p, w: bw, h: bh },
-          { x: sx + 3 * (bw + p), y: 2 * sy + p, w: bw, h: bh },
-          { x: sx + 4 * (bw + p), y: 2 * sy + p, w: bw, h: bh }
-        ],
-        [
-          { x: sx, y: 3 * sy + 2 * p, w: bw, h: bh },
-          { x: sx + (bw + p), y: 3 * sy + 2 * p, w: bw, h: bh },
-          { x: sx + 2 * (bw + p), y: 3 * sy + 2 * p, w: bw, h: bh },
-          { x: sx + 3 * (bw + p), y: 3 * sy + 2 * p, w: bw, h: bh },
-          { x: sx + 4 * (bw + p), y: 3 * sy + 2 * p, w: bw, h: bh }
-        ],
-        [
-          { x: sx, y: 4 * sy + 3 * p, w: bw, h: bh },
-          { x: sx + (bw + p), y: 4 * sy + 3 * p, w: bw, h: bh },
-          { x: sx + 2 * (bw + p), y: 4 * sy + 3 * p, w: bw, h: bh },
-          { x: sx + 3 * (bw + p), y: 4 * sy + 3 * p, w: bw, h: bh },
-          { x: sx + 4 * (bw + p), y: 4 * sy + 3 * p, w: bw, h: bh }
-        ]
-      ]
+      bricks: []
     };
+  },
+
+  created() {
+    this.bricks = generateRandomBricks(appear_rate);
   },
 
   // Randomly selects a value to randomly increment or decrement every 16 ms.
   // Not really important, just demonstrates that reactivity still works.
   mounted() {
     document.addEventListener("keydown", this.movePaddle, false);
+    document.addEventListener("mousemove", this.mouseMoveHandler, false);
     setInterval(() => {
+      checkBricksCollision(this.ball, this.bricks);
       checkPaddleCollision(this.ball, this.paddle);
       checkBorderCollision(this.ball);
-      checkBricksCollision(this.ball, this.bricks);
       this.ball.x += dx;
       this.ball.y += dy;
     }, 16);
@@ -115,9 +93,41 @@ export default {
           this.paddle.x -= speed;
         }
       }
+    },
+    mouseMoveHandler: function(event) {
+      let offset = this.$refs["the-canvas"].$refs["my-canvas"].offsetLeft;
+      // W = this.$refs["the-canvas"].$refs["my-canvas"].width;
+      // H = this.$refs["the-canvas"].$refs["my-canvas"].height;
+      let relativeX = event.clientX - offset;
+      if (relativeX > 0 && relativeX < W) {
+        this.paddle.x = relativeX - this.paddle.w / 2;
+      }
     }
   }
 };
+function generateRandomBricks(appear_rate) {
+  let rows = W / bw;
+  let cols = H / bh;
+  let bricks = [];
+  let i, j;
+  for (i = 0; i < rows; i++) {
+    let bricks_row = [];
+    for (j = Math.round(cols / 8); j < cols / 2; j++) {
+      let ran = Math.random();
+      if (ran <= appear_rate) {
+        let brick = new Object();
+        brick.x = i * bw + p;
+        brick.y = j * bh + p;
+        brick.w = bw - 2 * p;
+        brick.h = bh - 2 * p;
+        brick.color = getRandomColor();
+        bricks_row.push(brick);
+      }
+    }
+    bricks.push(bricks_row);
+  }
+  return bricks;
+}
 function checkBorderCollision(ball) {
   if (ball.x + ball.r > W) {
     dx = -dx;
@@ -134,7 +144,8 @@ function checkBorderCollision(ball) {
 }
 function checkPaddleCollision(ball, paddle) {
   if (
-    ball.y >= H - paddle_h - ball_radius &&
+    ball.y + ball.r >= paddle.y &&
+    ball.y + ball.r < paddle.y + paddle.h &&
     ball.x >= paddle.x &&
     ball.x <= paddle.x + paddle.w
   ) {
@@ -155,8 +166,8 @@ function checkBricksCollision(ball, bricks) {
         ball.x <= brick.x + brick.w
       ) {
         dy = -dy;
+        ball.color = brick.color;
         bricks_row.splice(j, 1);
-        ball.color = getRandomColor();
       } else if (
         ball.y - ball.r <= brick.y + brick.h &&
         ball.y - ball.r > brick.y &&
@@ -164,8 +175,8 @@ function checkBricksCollision(ball, bricks) {
         ball.x <= brick.x + brick.w
       ) {
         dy = -dy;
+        ball.color = brick.color;
         bricks_row.splice(j, 1);
-        ball.color = getRandomColor();
       } else if (
         ball.x + ball.r >= brick.x &&
         ball.x + ball.r < brick.x + brick.w &&
@@ -173,8 +184,8 @@ function checkBricksCollision(ball, bricks) {
         ball.y <= brick.y + brick.h
       ) {
         dx = -dx;
+        ball.color = brick.color;
         bricks_row.splice(j, 1);
-        ball.color = getRandomColor();
       } else if (
         ball.x - ball.r <= brick.x + brick.w &&
         ball.x - ball.r > brick.x &&
@@ -182,15 +193,15 @@ function checkBricksCollision(ball, bricks) {
         ball.y <= brick.y + brick.h
       ) {
         dx = -dx;
+        ball.color = brick.color;
         bricks_row.splice(j, 1);
-        ball.color = getRandomColor();
       }
     }
   }
 }
 function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
+  var letters = "0123456789ABCDEF";
+  var color = "#";
   for (var i = 0; i < 6; i++) {
     color += letters[Math.floor(Math.random() * 16)];
   }
@@ -206,7 +217,7 @@ function getRandomColor() {
 }
 
 #app {
-  width: 1000px;
+  width: 602px;
   margin: auto;
 }
 h2 {
@@ -214,10 +225,8 @@ h2 {
 }
 .my-canvas-wrapper {
   width: 100%;
-  height: 700px;
-  border: 1px solid;
+  height: 702px;
+  border: 1px solid #08F;
 }
 
-canvas {
-}
 </style>

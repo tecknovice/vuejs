@@ -1,10 +1,9 @@
 <script>
-
 export default {
   // Gets us the provider property from the parent <my-canvas> component.
   inject: ["provider"],
 
-  props: ['paddle'],
+  props: ["paddle"],
 
   data() {
     return {
@@ -14,7 +13,8 @@ export default {
         x: null,
         y: null,
         w: null,
-        h: null
+        h: null,
+        color: null
       }
     };
   },
@@ -28,7 +28,8 @@ export default {
         x: this.paddle.x,
         y: this.paddle.y,
         w: this.paddle.w,
-        h: this.paddle.h
+        h: this.paddle.h,
+        color: this.paddle.color
       };
 
       // Yes yes, side-effects. This lets us cache the box dimensions of the previous render.
@@ -52,14 +53,11 @@ export default {
     ctx.beginPath();
     // Clear the old area from the previous render.
     ctx.clearRect(oldBox.x, oldBox.y, oldBox.w, oldBox.h);
- 
 
     // Draw the new rectangle.
-    ctx.rect(newBox.x,newBox.y, newBox.w, newBox.h);
-    ctx.fillStyle = "#08F";
+    ctx.rect(newBox.x, newBox.y, newBox.w, newBox.h);
+    ctx.fillStyle = newBox.color;
     ctx.fill();
-
-
   }
 };
 </script>

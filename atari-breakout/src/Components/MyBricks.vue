@@ -49,26 +49,23 @@ export default {
     // Calculate the new box. (Computed properties update on-demand.)
     const newBricks = this.calculatedBox;
 
-    ctx.beginPath();
     let i, j;
     // Clear the old area from the previous render.
     for (i = 0; i < oldBricks.length; i++) {
       let bricks_row = oldBricks[i];
       for (j = 0; j < bricks_row.length; j++) {
         let brick = bricks_row[j];
-        ctx.clearRect(brick.x - 1, brick.y - 1, brick.w + 2, brick.h + 2);
+        ctx.clearRect(brick.x, brick.y, brick.w, brick.h);
       }
     }
-    // Draw the new rectangle.
-    // ctx.rect(newBox.x,newBox.y, newBox.w, newBox.h);
+    // Draw the new ones.
 
     for (i = 0; i < newBricks.length; i++) {
       let bricks_row = newBricks[i];
       for (j = 0; j < bricks_row.length; j++) {
         let brick = bricks_row[j];
-        ctx.rect(brick.x, brick.y, brick.w, brick.h);
-        ctx.fillStyle = "#08F";
-        ctx.fill();
+        ctx.fillStyle = brick.color;
+        ctx.fillRect(brick.x, brick.y, brick.w, brick.h);
       }
     }
     // console.log(this.bricks);
@@ -80,6 +77,7 @@ function cloneBrick(brick) {
   clone.y = brick.y;
   clone.w = brick.w;
   clone.h = brick.h;
+  clone.color = brick.color;
   return clone;
 }
 </script>
