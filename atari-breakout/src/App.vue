@@ -6,17 +6,32 @@
       <div class="left" ref="lives"></div>
       <div class="clear"></div>
     </div>
+    <div class='modal' ref="modal">
+        <div class='modal-play' ref="modal-play">
+            <div class='title'>Memory card</div>
+            <button @click='play();'>Play</button>
+        </div>
+        <div class='modal-loss' ref="modal-loss">
+            <div class='title'>You loss</div>
+            <button  @click='play();'>Play again</button>
+        </div>
+        <div class='modal-win' ref="modal-win">
+            <div class='title'>Congrat! You win</div>
+            <button  @click='play();'>Play again</button>
+        </div>
+    </div>
     <!-- These are the custom components we'll create -->
     <!-- Values for `my-box` are percentages of the width of the canvas. -->
     <!-- Each bar will take up an equal space of the canvas. -->
     <my-canvas ref="my-canvas-wrapper">
-      <div class="orientation-bar" ref="orientation-bar">
-          <div class="power-bar" ref="power-bar"></div>
-      </div>
       <my-paddle :paddle = "paddle"></my-paddle>
       <my-ball :ball = "ball"></my-ball>
       <my-bricks :bricks = "bricks"></my-bricks>
     </my-canvas>
+    <span class="tooltip" ref="tooltip">Hold, drag &amp; drop to move the ball</span>
+    <div class="cover-bar" ref="cover-bar">
+      <progress class="power-bar" ref="power-bar"   value="10" max="20"></progress>
+    </div>
   </div>
 </template>
 
@@ -117,48 +132,29 @@ export default {
       }
     },
     mouseMoveHandler: function(event) {
-
-      let off1 = this.$refs["my-canvas-wrapper"].offsetLeft;
-      let off2 = this.$refs["my-canvas-wrapper"].offsetTop;
-       console.log("off1"+off1);
-      console.log("off2"+off2);
-      let offsetLeft = this.$refs["my-canvas-wrapper"].$refs["my-canvas"].offsetLeft;
-      let offsetTop = this.$refs["my-canvas-wrapper"].$refs["my-canvas"].offsetTop;
-      
-      console.log("offsetLeft"+offsetLeft);
-      console.log("offsetTop"+offsetTop);
+      let offsetLeft = this.$refs["my-canvas-wrapper"].$refs["my-canvas"]
+        .offsetLeft;
+      let offsetTop = this.$refs["my-canvas-wrapper"].$refs["my-canvas"]
+        .offsetTop;
       if (flag == true) {
-        coorX = event.clientX ;
-        coorY = event.clientY   ;
+        console.log("mousemoveevent"+event.pageX);
+        console.log(event.pageY);
+        coorX = event.clientX - offsetLeft;
+        coorY = event.clientY - offsetTop;
         if (coorX > 0 && coorX < W && coorY > 0 && coorY < H) {
-          console.log(coorX);
-          console.log(coorY);
+          console.log("coorX"+coorX);
+          console.log("coorY"+coorY);
           vectorX = coorX - this.ball.x;
           vectorY = coorY - this.ball.y;
           distance = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-          if (vectorY == 0) {
-            tan = null;
-            if (vectorX >= 0) {
-              angle = -90;
-            } else {
-              angle = 90;
-            }
-          } else {
-            tang = vectorX / vectorY;
-            angle = -(Math.atan(tang) * 180) / Math.PI;
-            // console.log("tang"+tang);
-            // console.log("vectorX"+vectorX);
-            // console.log("vectorY"+vectorY);
-            // console.log("angle"+angle);
-          }
-          let orientation_bar = this.$refs["orientation-bar"];
-          orientation_bar.style.transform = "rotate(" + angle + "deg)";
+          let tooltip = this.$refs["tooltip"];
+          tooltip.style.left = event.pageX + "px";
+          tooltip.style.top = event.pageY + "px";
+          tooltip.style.display = "display";
         } else {
           return;
         }
       } else {
-        // W = this.$refs["my-canvas-wrapper"].$refs["my-canvas"].width;
-        // H = this.$refs["my-canvas-wrapper"].$refs["my-canvas"].height;
         let relativeX = event.clientX - offsetLeft;
         if (relativeX > 0 && relativeX < W) {
           this.paddle.x = relativeX - this.paddle.w / 2;
@@ -180,7 +176,11 @@ export default {
           } else {
             power -= 1;
           }
-          // console.log(power);
+          let tooltip = this.$refs["tooltip"];
+          tooltip.style.display = "display";
+          let power_bar = this.$refs["power-bar"];
+          power_bar.style.visibility = "visible";
+          power_bar.value = power;
         }, 100);
       }
     },
@@ -189,8 +189,10 @@ export default {
       clearInterval(hold);
       dx = Math.round((power * vectorX) / distance);
       dy = Math.round((power * vectorY) / distance);
-      // console.log(dx);
-      // console.log(dy);
+      let power_bar = this.$refs["power-bar"];
+      power_bar.style.visibility = "hidden";
+      let tooltip = this.$refs["tooltip"];
+      tooltip.style.display = "none";
     },
     reset: function() {
       this.paddle = {
@@ -206,30 +208,15 @@ export default {
         r: ball_radius,
         color: "#08F"
       };
-      console.log("x" + this.ball.x);
-      console.log("y" + this.ball.y);
       dx = 0;
       dy = 0;
       power = 0;
       flag = true;
+      console.log("reset");
+      this.$refs["tooltip"].style.display = "none";
     }
   }
 };
-// function reset(ball, paddle) {
-//   paddle = {
-//     x: W / 2 - paddle_w / 2,
-//     y: H - paddle_h,
-//     w: paddle_w,
-//     h: paddle_h,
-//     color: "#08F"
-//   };
-//   ball = {
-//     x: W / 2,
-//     y: H - paddle_h - ball_radius,
-//     r: ball_radius,
-//     color: "#08F"
-//   };
-// }
 function generateRandomBricks(appear_rate) {
   let rows = W / bw;
   let cols = H / bh;
@@ -353,12 +340,10 @@ function getRandomColor() {
 }
 
 #app {
-  position: relative;
   width: 602px;
   margin: auto;
 }
 .header {
-  position: relative;
   width: 100%;
 }
 .left {
@@ -368,47 +353,69 @@ function getRandomColor() {
   height: 100%;
 }
 .my-canvas-wrapper {
-  position: relative;
   width: 100%;
   height: 702px;
   border: 1px solid #08f;
 }
-canvas{
+canvas {
   /* position: relative; */
 }
-.power-bar {
-  position: relative;
+progress {
   z-index: 1000;
-  width: 0px;
+  /* Reset the default appearance */
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
   height: 20px;
-  background: red;
+}
+.cover-bar {
+  width: 100%;
+  height: 20px;
+  border: 1px;
+}
+.tooltip {
+  position: absolute;
 }
 
-.orientation-bar {
-  top: 670px;
-  left: 400px;
-  position: absolute;
-  width: 100px;
-  height: 20px;
-  background: #08f;
-  transform-origin: -100% 50%;
-  transform: rotate(0deg);
+/* Modal background */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 250px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-.orientation-bar:after {
-  left: 100%;
-  top: 50%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-  border-color: rgba(0, 136, 255, 0);
-  border-left-color: #08f;
-  border-width: 20px;
-  margin-top: -20px;
+/* Modal Content */
+.modal-play, .modal-loss , .modal-win{
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    font-family: sans-serif;
+    font-size:  2em;
+    text-align: center;
+    box-shadow: 0 10px 10px 10px rgba(0,0,0,0.2);
 }
+
+.modal button{
+    padding:  10px;
+    width: 150px;
+    font-size: 15px;
+    margin-top: 30px;
+    background-color: #ff8a20;
+    color:  #fff;
+    text-transform: uppercase;
+}
+
+
 .clear {
   clear: both;
 }
