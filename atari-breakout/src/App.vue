@@ -30,7 +30,7 @@
     </my-canvas>
     <span class="tooltip" ref="tooltip">Hold, drag &amp; drop to move the ball</span>
     <div class="cover-bar" ref="cover-bar">
-      <progress class="power-bar" ref="power-bar"   value="10" max="20"></progress>
+      <progress class="power-bar" ref="power-bar"   value="0" max="20"></progress>
     </div>
   </div>
 </template>
@@ -88,13 +88,18 @@ export default {
     return {
       paddle: null,
       ball: null,
-      bricks: []
+      bricks: [],
+      status: "run"
     };
   },
 
   created() {
     this.bricks = generateRandomBricks(appear_rate);
     this.reset();
+    // this.$refs["modal"].style.display = "block";
+    // this.$refs["modal-play"].style.display = "block";
+    // this.$refs["modal-win"].style.display = "none";
+    // this.$refs["modal-loss"].style.display = "none";
   },
 
   // Randomly selects a value to randomly increment or decrement every 16 ms.
@@ -104,22 +109,44 @@ export default {
     document.addEventListener("mousemove", this.mouseMoveHandler, false);
     document.addEventListener("mousedown", this.startAccelerateBall, false);
     document.addEventListener("mouseup", this.stopAccelerateBall, false);
-    setInterval(() => {
-      checkBricksCollision(this.ball, this.bricks);
-      checkPaddleCollision(this.ball, this.paddle);
-      let check = checkBorderCollision(this.ball, this.paddle);
-      this.$refs["score"].innerText = "Score: " + score;
-      this.$refs["lives"].innerText = "Lives: " + lives;
-      if (check == false) {
-        this.reset();
-        return;
-      }
-      this.ball.x += dx;
-      this.ball.y += dy;
-    }, 16);
+    this.update();
+    // setInterval(() => {}, 16);
   },
   methods: {
+    update: function() {
+      checkBricksCollision(this.ball, this.bricks);
+      let remainBricks = calculateBricksNumber(this.bricks);
+      this.$refs["score"].innerText = "Score: " + score;
+      if (remainBricks == 0) {
+        this.status = "modal";
+        this.$refs["modal"].style.display = "block";
+        this.$refs["modal-play"].style.display = "none";
+        this.$refs["modal-win"].style.display = "block";
+        this.$refs["modal-loss"].style.display = "none";
+        return;
+      }
+      checkPaddleCollision(this.ball, this.paddle);
+      let check = checkBorderCollision(this.ball, this.paddle);
+      this.$refs["lives"].innerText = "Lives: " + lives;
+      if (check == "lost") {
+        this.reset();
+      } else if (check == "die") {
+        this.status = "modal";
+        this.$refs["modal"].style.display = "block";
+        this.$refs["modal-play"].style.display = "none";
+        this.$refs["modal-win"].style.display = "none";
+        this.$refs["modal-loss"].style.display = "block";
+        return;
+      } else if (check == "live") {
+        this.ball.x += dx;
+        this.ball.y += dy;
+      }
+      requestAnimationFrame(this.update);
+    },
     movePaddle: function(event) {
+      if (this.status == "modal") {
+        return;
+      }
       if (event.keyCode == 39) {
         if (this.paddle.x + paddle_w < W) {
           this.paddle.x += speed;
@@ -132,25 +159,24 @@ export default {
       }
     },
     mouseMoveHandler: function(event) {
+      if (this.status == "modal") {
+        return;
+      }
       let offsetLeft = this.$refs["my-canvas-wrapper"].$refs["my-canvas"]
         .offsetLeft;
       let offsetTop = this.$refs["my-canvas-wrapper"].$refs["my-canvas"]
         .offsetTop;
       if (flag == true) {
-        console.log("mousemoveevent"+event.pageX);
-        console.log(event.pageY);
         coorX = event.clientX - offsetLeft;
         coorY = event.clientY - offsetTop;
         if (coorX > 0 && coorX < W && coorY > 0 && coorY < H) {
-          console.log("coorX"+coorX);
-          console.log("coorY"+coorY);
           vectorX = coorX - this.ball.x;
           vectorY = coorY - this.ball.y;
           distance = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
           let tooltip = this.$refs["tooltip"];
           tooltip.style.left = event.pageX + "px";
           tooltip.style.top = event.pageY + "px";
-          tooltip.style.display = "display";
+          tooltip.style.display = "block";
         } else {
           return;
         }
@@ -162,6 +188,9 @@ export default {
       }
     },
     startAccelerateBall: function(event) {
+      if (this.status == "modal") {
+        return;
+      }
       if (flag == true) {
         let plus = true;
         power = 1;
@@ -177,7 +206,7 @@ export default {
             power -= 1;
           }
           let tooltip = this.$refs["tooltip"];
-          tooltip.style.display = "display";
+          tooltip.style.display = "block";
           let power_bar = this.$refs["power-bar"];
           power_bar.style.visibility = "visible";
           power_bar.value = power;
@@ -185,6 +214,9 @@ export default {
       }
     },
     stopAccelerateBall: function(event) {
+      if (this.status == "modal") {
+        return;
+      }
       flag = false;
       clearInterval(hold);
       dx = Math.round((power * vectorX) / distance);
@@ -212,8 +244,21 @@ export default {
       dy = 0;
       power = 0;
       flag = true;
-      console.log("reset");
+    },
+    play: function() {
+      this.bricks = generateRandomBricks(appear_rate);
+      this.reset();
       this.$refs["tooltip"].style.display = "none";
+      score = 0;
+      this.$refs["score"].innerText = "Score: " + score;
+      lives = 5;
+      this.$refs["lives"].innerText = "Lives: " + lives;
+      this.$refs["modal"].style.display = "none";
+      this.$refs["modal-play"].style.display = "none";
+      this.$refs["modal-win"].style.display = "none";
+      this.$refs["modal-loss"].style.display = "none";
+      this.status = "run";
+      this.update();
     }
   }
 };
@@ -240,6 +285,18 @@ function generateRandomBricks(appear_rate) {
   }
   return bricks;
 }
+function calculateBricksNumber(bricks) {
+  let i,
+    j,
+    count = 0;
+  for (i = 0; i < bricks.length; i++) {
+    let row = bricks[i];
+    for (j = 0; j < row.length; j++) {
+      count += 1;
+    }
+  }
+  return count;
+}
 function checkBorderCollision(ball, paddle) {
   if (ball.x + ball.r + dx > W) {
     dx = -dx;
@@ -251,15 +308,16 @@ function checkBorderCollision(ball, paddle) {
     dy = -dy;
     lives -= 1;
     if (lives <= 0) {
-      alert("You lose. Score: " + score);
+      // alert("You lose. Score: " + score);
+      return "die";
     } else {
-      return false;
+      return "lost";
     }
   }
   if (ball.y - ball.r + dy < 0) {
     dy = -dy;
   }
-  return true;
+  return "live";
 }
 function checkPaddleCollision(ball, paddle) {
   if (
@@ -379,42 +437,43 @@ progress {
 
 /* Modal background */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 250px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 250px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
 /* Modal Content */
-.modal-play, .modal-loss , .modal-win{
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 300px;
-    font-family: sans-serif;
-    font-size:  2em;
-    text-align: center;
-    box-shadow: 0 10px 10px 10px rgba(0,0,0,0.2);
+.modal-play,
+.modal-loss,
+.modal-win {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 300px;
+  font-family: sans-serif;
+  font-size: 2em;
+  text-align: center;
+  box-shadow: 0 10px 10px 10px rgba(0, 0, 0, 0.2);
 }
 
-.modal button{
-    padding:  10px;
-    width: 150px;
-    font-size: 15px;
-    margin-top: 30px;
-    background-color: #ff8a20;
-    color:  #fff;
-    text-transform: uppercase;
+.modal button {
+  padding: 10px;
+  width: 150px;
+  font-size: 15px;
+  margin-top: 30px;
+  background-color: #ff8a20;
+  color: #fff;
+  text-transform: uppercase;
 }
-
 
 .clear {
   clear: both;
