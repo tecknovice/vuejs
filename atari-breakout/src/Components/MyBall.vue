@@ -50,10 +50,10 @@ export default {
 
     // Clear the old area from the previous render.
     ctx.clearRect(
-      oldBox.x - oldBox.r,
-      oldBox.y - oldBox.r,
-      2 * oldBox.r,
-      2 * oldBox.r
+      oldBox.x - oldBox.r - 1,
+      oldBox.y - oldBox.r - 1,
+      2 * oldBox.r + 2,
+      2 * oldBox.r + 2
     );
     // clearArc(ctx, oldBox.x, oldBox.y, oldBox.r);
 

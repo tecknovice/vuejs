@@ -1,4 +1,4 @@
-# my-project
+# Atari breakout
 
 > A Vue.js project
 

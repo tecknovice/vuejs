@@ -1,14 +1,13 @@
 <template>
   <div id="app">
     <div class="header">
-      <div class="left" ref="score"></div>
-      <div class="left" >Atari Breakout</div>
-      <div class="left" ref="lives"></div>
+      <div class="left score" ref="score"></div>
+      <div class="left lives" ref="lives"></div>
       <div class="clear"></div>
     </div>
     <div class='modal' ref="modal">
         <div class='modal-play' ref="modal-play">
-            <div class='title'>Memory card</div>
+            <div class='title'>Atari breakout</div>
             <button @click='play();'>Play</button>
         </div>
         <div class='modal-loss' ref="modal-loss">
@@ -43,6 +42,7 @@ let score = 0;
 let lives = 5;
 //start & reset flag
 let flag = true;
+let color ="#08F";
 //mouse event params
 let hold;
 let coorX;
@@ -96,10 +96,6 @@ export default {
   created() {
     this.bricks = generateRandomBricks(appear_rate);
     this.reset();
-    // this.$refs["modal"].style.display = "block";
-    // this.$refs["modal-play"].style.display = "block";
-    // this.$refs["modal-win"].style.display = "none";
-    // this.$refs["modal-loss"].style.display = "none";
   },
 
   // Randomly selects a value to randomly increment or decrement every 16 ms.
@@ -110,7 +106,6 @@ export default {
     document.addEventListener("mousedown", this.startAccelerateBall, false);
     document.addEventListener("mouseup", this.stopAccelerateBall, false);
     this.update();
-    // setInterval(() => {}, 16);
   },
   methods: {
     update: function() {
@@ -217,10 +212,12 @@ export default {
       if (this.status == "modal") {
         return;
       }
-      flag = false;
       clearInterval(hold);
-      dx = Math.round((power * vectorX) / distance);
-      dy = Math.round((power * vectorY) / distance);
+      if (flag == true) {
+        dx = (power * vectorX) / distance;
+        dy = (power * vectorY) / distance;
+        flag = false;
+      }
       let power_bar = this.$refs["power-bar"];
       power_bar.style.visibility = "hidden";
       let tooltip = this.$refs["tooltip"];
@@ -232,13 +229,13 @@ export default {
         y: H - paddle_h,
         w: paddle_w,
         h: paddle_h,
-        color: "#08F"
+        color: color
       };
       this.ball = {
         x: W / 2,
-        y: H - paddle_h - ball_radius,
+        y: H - paddle_h - ball_radius - 1,
         r: ball_radius,
-        color: "#08F"
+        color: color
       };
       dx = 0;
       dy = 0;
@@ -391,24 +388,34 @@ function getRandomColor() {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: 'Roboto', sans-serif;
+  color: #08F;
 }
 
 #app {
   width: 602px;
   margin: auto;
+  margin-top:15px;
 }
 .header {
   width: 100%;
+  height: 30px;
 }
 .left {
-  text-align: center;
   float: left;
-  width: 33.3333%;
+  width: 50%;
   height: 100%;
+}
+.score{
+  text-align: left;
+}
+.lives{
+  text-align: right;
 }
 .my-canvas-wrapper {
   width: 100%;
@@ -459,7 +466,6 @@ progress {
   padding: 20px;
   border: 1px solid #888;
   width: 300px;
-  font-family: sans-serif;
   font-size: 2em;
   text-align: center;
   box-shadow: 0 10px 10px 10px rgba(0, 0, 0, 0.2);
@@ -470,7 +476,7 @@ progress {
   width: 150px;
   font-size: 15px;
   margin-top: 30px;
-  background-color: #ff8a20;
+  background-color: #08F;
   color: #fff;
   text-transform: uppercase;
 }
