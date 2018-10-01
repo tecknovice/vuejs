@@ -277,6 +277,10 @@ header .count {
   border-radius: 1.5rem;
 }
 
+.promotion-info > div{
+  display: none;
+}
+
 /* --- SMALL SCREEN --- */
 @media all and (max-width: 599px) {
   .thumbnail img {
