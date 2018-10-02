@@ -206,7 +206,7 @@ header .count {
 /* --- SUMMARY --- */
 .promotion,
 .summary,
-.checkout {
+.checkout{
   float: left;
   width: 100%;
   margin-top: 1.5rem;
@@ -248,18 +248,33 @@ header .count {
   font-size: 1rem;
 }
 
-.summary {
+.summary{
   font-size: 1.2rem;
   text-align: right;
 }
 
-.summary ul li {
+.summary ul li{
   padding: 0.5rem 0;
 }
 
 .summary ul li span {
   display: inline-block;
   width: 30%;
+}
+.promotion-info {
+  text-align: left;
+  margin-top: 1.5rem;
+  float: left;
+  width:  100%;
+}
+.promotion-info > div {
+  padding: 0.5rem 0;
+}
+.promotion-info div span{
+  display: block;
+  width: 50%;
+  float: left;
+  padding: .5rem 0;
 }
 
 .summary ul li.total {
@@ -277,7 +292,7 @@ header .count {
   border-radius: 1.5rem;
 }
 
-.promotion-info > div{
+.displaynone{
   display: none;
 }
 

@@ -5,21 +5,10 @@ let myVue = new Vue({
   data: {
     products: null,
     taxPercent: 10,
-    promotions: [
-      {
-        code: "29xgbuHa4O",
-        discount: "50%"
-      },
-      {
-        code: "mUxSnhywT1",
-        discount: "40%"
-      },
-      {
-        code: "nDdViZL4l3",
-        discount: "30%"
-      }
-    ],
-    promotionCode: ""
+    promotions: null,
+    promotionCode: "",
+    validPromotion: false,
+    checkPromotion: false
   },
   created: function () {
     this.products = generateRandomProducts(numOfProducts);
@@ -62,7 +51,8 @@ let myVue = new Vue({
       return 0;
     },
     totalPromotionDiscount: function () {
-      return (this.subtotal + this.tax) * this.promotionDiscount / 100;
+      let totalDiscount = (this.subtotal + this.tax) * this.promotionDiscount / 100;
+      return Number(totalDiscount.toFixed(2));
     }
   },
   methods: {
@@ -70,18 +60,27 @@ let myVue = new Vue({
       let product = this.products.splice(index, 1);
     },
     handleButtonClickEvent: function (event) {
+      this.checkPromotion = true;
       for (let i = 0; i < this.promotions.length; i++) {
         const promotion = this.promotions[i];
         if (promotion.code == this.promotionCode) {
-          this.$refs["invalid-promotion-code"].style.display = "none";
-          this.$refs["promotion-info"].style.display = "block";
-          this.$refs["total-promotion-discount"].style.display = "block";
+          this.validPromotion = true;
           return;
         }
       }
-      this.$refs["invalid-promotion-code"].style.display = "block";
-      this.$refs["promotion-info"].style.display = "none";
-      this.$refs["total-promotion-discount"].style.display = "none";
+      this.validPromotion = false;
+    },
+    handleQuantityInputEvent(product) {
+      if (product.quantity > 100) {
+        product.quantity = 100;
+      }
+      if (product.quantity < 1) {
+        product.quantity = 1;
+      }
+    },
+    handlePromotionInputEvent(event) {
+      // console.log(event.target);
+      this.checkPromotion = false;
     }
   }
 });
@@ -106,7 +105,7 @@ function generateRandomPromotions(numOfPromotions) {
   for (i = 0; i < numOfPromotions; i++) {
     let promotion = new Object();
     promotion.code = makeCode();
-    promotion.discount = faker.random.number({ min: 1, max: 100 });
+    promotion.discount = faker.random.number({ min: 1, max: 50 });
     promotions.push(promotion);
   }
   return promotions;

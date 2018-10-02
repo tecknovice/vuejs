@@ -43,7 +43,7 @@
                     <div class="col right">
                         <div class="quantity">
                             <!-- <input type="number" class="quantity" step="1" value="2" /> -->
-                            <input type="number" class="quantity" step="1" v-model.number="product.quantity" />
+                            <input type="number" class="quantity" step="1" v-model.number="product.quantity" v-on:input="handleQuantityInputEvent(product)" />
                         </div>
 
                         <div class="remove">
@@ -62,22 +62,24 @@
         <section class="container">
             <div class="promotion">
                 <label for="promo-code">Have A Promo Code?</label>
-                <input type="text" id="promo-code" v-model="promotionCode" /> <button type="button" v-on:click="handleButtonClickEvent"></button>
-                <div class="promotion-info">
-                    <div ref="invalid-promotion-code">Invalid Promotion Code!</div>
-                    <div ref="promotion-info">
-                        <div>Promotion Code <span>{{promotionCode}}</span></div>
-                        <div>Discount <span>{{promotionDiscount}}</span></div>
+                <input type="text" id="promo-code" v-model="promotionCode" v-on:input="handlePromotionInputEvent" />
+                <button type="button" v-on:click="handleButtonClickEvent"></button>
+                <div class="promotion-info" v-bind:class="{ displaynone: !checkPromotion }">
+                    <div class="invalid-promotion-code" v-bind:class="{ displaynone: validPromotion }">Invalid
+                        Promotion Code!</div>
+                    <div class="valid-promotion-code" v-bind:class="{ displaynone: !validPromotion }">
+                        <div> <span>Promotion Code</span> <span>{{promotionCode}}</span></div>
+                        <div> <span>Discount</span> <span>{{promotionDiscount}}%</span></div>
                     </div>
                 </div>
             </div>
 
             <div class="summary">
                 <ul>
-                    <li>Subtotal <span>${{subtotal}}</span></li>
-                    <li>Tax <span>${{tax}}</span></li>
-                    <li ref="total-promotion-discount">Promotion <span>-{{totalPromotionDiscount}}</span></li>
-                    <li class="total">Total <span>${{total}}</span></li>
+                    <li>Subtotal <span>${{subtotal.toLocaleString()}}</span></li>
+                    <li>Tax <span>${{tax.toLocaleString()}}</span></li>
+                    <li v-bind:class="{ displaynone: !validPromotion }">Promotion <span>-${{totalPromotionDiscount.toLocaleString()}}</span></li>
+                    <li class="total">Total <span>${{total.toLocaleString()}}</span></li>
                 </ul>
             </div>
 
