@@ -1,4 +1,5 @@
 .DS_Store 
-.vscode/ 
+.vscode/
+.idea/ 
 pro-vue-js-2/
 node_modules/
