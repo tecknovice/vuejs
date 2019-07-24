@@ -1,15 +1,15 @@
-#install nodeJS v8.11.2
-#install git
-#git clone 
+# install nodeJS v8.11.2
+# install git
+# git clone 
 ```
 git clone https://github.com/tecknovice/vuejs
 cd vuejs/sportsstore
 ```
-#install @vue/cli client package
+# install @vue/cli client package
 ```
 npm install --global @vue/cli
 ```
-#install packages
+# install packages
 ```
 npm install axios@0.18.0
 npm install vue-router@3.0.1
@@ -21,23 +21,23 @@ npm install --save-dev json-server@0.12.1
 npm install --save-dev jsonwebtoken@8.1.1
 npm install --save-dev faker@4.1.0
 ```
-#run web service
+# run web service
 ```
 npm run json
 ```
-#check web service
+# check web service
 ```
 http://localhost:3500/products/
 http://localhost:3500/categories/
 http://localhost:3500/orders/
 
 ```
-#run todo app
+# run todo app
 ```
 npm run serve
 
 ```
-#access todo app
+# access todo app
 ```
 http://localhost:8080
 ```

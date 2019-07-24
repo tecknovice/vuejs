@@ -1,4 +1,4 @@
-# my-project
+# canvas-barchart
 
 > A Vue.js project
 
