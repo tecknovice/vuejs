@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <img alt="world map" src="../assets/images/world-map.svg">
+    <img class="img-fluid" alt="world map" src="../assets/images/world-map.svg">
   </div>
 </template>
 
