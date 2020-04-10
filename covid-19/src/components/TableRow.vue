@@ -1,31 +1,26 @@
 <template>
-  <table>
-    <thead>
-      <tr>
-        <th>No.</th>
-        <th>Country</th>
-        <th>Confirmed</th>
-        <th>Deaths</th>
-        <th>Recovered</th>
+      <tr v-for="(country,index) in this.$store.state.countries" :key="country.CountryCode">
+        <td>{{ index+1 }}</td>
+        <td>{{ country.Country }}</td>
+        <td>{{country.TotalConfirmed}}</td>
+        <td>{{country.TotalDeaths}}</td>
+        <td>{{country.TotalRecovered}}</td>
       </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
 </template>
 
 <script>
 export default {
-  name: "table",
-  props: {
-    msg: String
-  }
-};
+  name: "TableRow"
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 table {
+  /* display: block; */
   width: 100%;
+  height: 500px;
+  overflow-y: scroll;
 }
 
 th,

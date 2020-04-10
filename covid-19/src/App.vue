@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <header class="p-5">COVID 19</header>
+    <header class="p-5 mx-auto">COVID 19</header>
     <main class="container mt-5">
       <section class="row">
       <section class="col-12"><world-map/></section>
@@ -14,13 +14,16 @@
 </template>
 
 <script>
-import WorldMap from "./components/map";
-import DataTable from "./components/table";
+import WorldMap from "./components/WorldMap";
+import DataTable from "./components/DataTable";
 export default {
   name: 'App',
   components:{
     WorldMap,
     DataTable
+  },
+   created () {
+    this.$store.dispatch('init')
   }
 }
 </script>
