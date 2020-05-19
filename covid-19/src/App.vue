@@ -3,7 +3,7 @@
     <header class="p-5 mx-auto">COVID 19</header>
     <main class="container mt-5">
       <section class="row">
-      <section class="col-12"><world-map/></section>
+      <section class="col-12"><simple-map/></section>
       </section>
       <section class="row">
         <section class="col-12"><data-table/></section>
@@ -14,12 +14,14 @@
 </template>
 
 <script>
-import WorldMap from "./components/WorldMap";
+// import WorldMap from "./components/WorldMap";
+import SimpleMap from "./components/SimpleMap";
 import DataTable from "./components/DataTable";
 export default {
   name: 'App',
   components:{
-    WorldMap,
+    // WorldMap,
+    SimpleMap,
     DataTable
   },
    created () {
