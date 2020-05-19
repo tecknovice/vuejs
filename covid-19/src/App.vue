@@ -3,7 +3,7 @@
     <header class="p-5 mx-auto">COVID 19</header>
     <main class="container mt-5">
       <section class="row">
-      <section class="col-12"><simple-map/></section>
+      <section class="col-12"><world-map/></section>
       </section>
       <section class="row">
         <section class="col-12"><data-table/></section>
@@ -14,18 +14,18 @@
 </template>
 
 <script>
-// import WorldMap from "./components/WorldMap";
-import SimpleMap from "./components/SimpleMap";
+import WorldMap from "./components/WorldMap";
+// import SimpleMap from "./components/SimpleMap";
 import DataTable from "./components/DataTable";
 export default {
   name: 'App',
   components:{
-    // WorldMap,
-    SimpleMap,
+    WorldMap,
+    // SimpleMap,
     DataTable
   },
-   created () {
-    this.$store.dispatch('init')
+  async created () {
+    await this.$store.dispatch('init')
   }
 }
 </script>

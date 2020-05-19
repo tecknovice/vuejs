@@ -5,7 +5,8 @@ Vue.use(Vuex)
 
 const state = {
   countries:[],
-  global:{}
+  global:{},
+  geoData:{}
 }
 
 const mutations = {
@@ -14,6 +15,9 @@ const mutations = {
   },
   createGlobal(state,global){
     state.global = global
+  },
+  createGeoData(state,geoData){
+    state.geoData = geoData
   }
 }
 
@@ -22,6 +26,8 @@ const actions = {
     let summary  = await API.getSummary()
     context.commit('createCountries',summary.Countries)
     context.commit('createGlobal',summary.Global)
+    let geoData = await API.getWorldGeoJson()
+    context.commit('createGeoData',geoData)
   }
 }
 
