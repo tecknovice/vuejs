@@ -4,3 +4,14 @@ body{
     font-size: 16px;
     color: #212529;
 }
+#content .map path {
+    fill: #aaa;
+    stroke: #fff;
+    transition: fill linear 0.2s;
+  }
+  .highlight{
+    fill: green !important  ;
+  }
+  .normal{
+      fill: #aaa !important;
+  }
