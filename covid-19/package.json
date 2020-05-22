@@ -10,6 +10,7 @@
   "dependencies": {
     "bootstrap": "^4.4.1",
     "core-js": "^3.6.4",
+    "country-iso-3-to-2": "^1.1.0",
     "d3": "^5.15.1",
     "jquery": "^3.4.1",
     "popper.js": "^1.16.1",

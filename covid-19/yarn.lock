@@ -2410,6 +2410,11 @@ cosmiconfig@^5.0.0:
     js-yaml "^3.13.1"
     parse-json "^4.0.0"
 
+country-iso-3-to-2@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/country-iso-3-to-2/-/country-iso-3-to-2-1.1.0.tgz#509bc7a4d2de9abfc57ad2d18fd8a40b85940a75"
+  integrity sha512-1+N29RRXHIsNrdxFYz/xqB6eacm592SQBExLBjHpr+nrLsKiikXvrFYM0RgW6uJBJgnvcqQH64ukydPF8ShBEA==
+
 create-ecdh@^4.0.0:
   version "4.0.3"
   resolved "https://registry.npm.taobao.org/create-ecdh/download/create-ecdh-4.0.3.tgz#c9111b6f33045c4697f144787f9254cdc77c45ff"
