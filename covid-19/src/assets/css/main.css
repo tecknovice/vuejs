@@ -1,17 +1,17 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
-body{
-    font-family: 'Roboto', sans-serif;
-    font-size: 16px;
-    color: #212529;
+@import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
+body {
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  color: #212529;
 }
 #content .map path {
-    fill: #aaa;
-    stroke: #fff;
-    transition: fill linear 0.2s;
-  }
-  .highlight{
-    fill: green !important  ;
-  }
-  .normal{
-      fill: #aaa !important;
-  }
+  fill: #aaa;
+  stroke: #fff;
+  transition: fill linear 0.3s;
+}
+.highlight {
+  fill: green !important  ;
+}
+.normal {
+  fill: #aaa !important;
+}
