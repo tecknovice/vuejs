@@ -3,7 +3,7 @@
     <header class="mt-5"><h1 class="text-center">COVID 19</h1></header>
     <main class="container ">
       <section class="row mt-5">
-        <section class="offset-2 col-8">
+        <section class="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
           <global-statistics/>
         </section>
       </section>

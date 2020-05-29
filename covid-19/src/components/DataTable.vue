@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive">
+  <div class="table-responsive tableFixHead">
     <table class="table">
       <thead class="thead-dark">
         <tr>
@@ -40,9 +40,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-tr:hover {
+/* tr:hover {
   transition: all 0.1s linear;
   box-shadow: 3px 3px 3px grey;
   transform: translateX(-1);
-}
+} */
+.tableFixHead { 
+  overflow-y: auto; 
+  height: 500px;
+  }
+.tableFixHead thead th { 
+  position: sticky;
+  top: 0; 
+  }
 </style>
