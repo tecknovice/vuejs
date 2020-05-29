@@ -1,7 +1,7 @@
 <template>
   <div class="table-responsive tableFixHead">
-    <table class="table">
-      <thead class="thead-dark">
+    <table class="table table-bordered table-hover table-sm">
+      <thead class="thead-light">
         <tr>
           <th scope="col">#</th>
           <th scope="col">Country</th>
