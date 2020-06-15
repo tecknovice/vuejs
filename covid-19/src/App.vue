@@ -8,10 +8,8 @@
         </section>
       </section>
       <section class="row mt-5">
-      <section class="col-12"><world-map/></section>
-      </section>
-      <section class="row mt-5">
-        <section class="col-12"><data-table/></section>
+        <section class="col-12 col-xl-7"><world-map/></section>
+        <section class="col-12  col-xl-5"><data-table/></section>
       </section>
     </main>
     <footer class="text-center mt-5">tecknovice</footer>

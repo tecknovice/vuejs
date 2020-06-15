@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       ascending: true,
-      sortName: "",
+      sortName: "TotalConfirmed",
       columns: ["Country", "TotalConfirmed", "TotalDeaths", "TotalRecovered"]
     };
   },
@@ -96,5 +96,8 @@ export default {
 .tableFixHead thead th {
   position: sticky;
   top: 0;
+}
+tr:hover{
+  cursor: pointer;
 }
 </style>
