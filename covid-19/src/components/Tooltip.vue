@@ -35,8 +35,8 @@ export default {
       let [X, Y] = value;
       this.tooltipStyle.left = X - tooltipWidth / 2 + "px";
       this.tooltipStyle.top = Y - tooltipHeight - 25 + "px";
-      console.log(X, Y);
-      console.log(this.statistics);
+      // console.log(X, Y);
+      // console.log(this.statistics);
     }
   }
 };

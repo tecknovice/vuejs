@@ -4,10 +4,20 @@
       <thead class="thead-light">
         <tr>
           <th scope="col">#</th>
-          <th scope="col">Country</th>
-          <th scope="col">Confirmed</th>
-          <th scope="col">Deaths</th>
-          <th scope="col">Recovered</th>
+          <th v-for="column in columns" :key="column" @click="sort(column)">
+            <div class="d-flex justify-content-between">
+              <span>{{column}}</span>
+              <span v-show="sortName==column && ascending==true">
+                <i class="fas fa-sort-up"></i>
+              </span>
+              <span v-show="sortName==column && ascending==false">
+                <i class="fas fa-sort-down"></i>
+              </span>
+              <span v-show="sortName!=column">
+                <i class="fas fa-sort"></i>
+              </span>
+            </div>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -30,9 +40,48 @@
 <script>
 export default {
   name: "DataTable",
+  data() {
+    return {
+      ascending: true,
+      sortName: "",
+      columns: ["Country", "TotalConfirmed", "TotalDeaths", "TotalRecovered"]
+    };
+  },
   methods: {
     selectCountry(country) {
       console.log(country);
+    },
+    sort(column) {
+      let ascending = this.ascending;
+      if (this.sortName == column) {
+        this.ascending = !this.ascending;
+      } else {
+        this.ascending = true;
+        this.sortName = column;
+      }
+      let sortedCountries = JSON.parse(JSON.stringify(this.$store.state.countries));
+      sortedCountries.sort(function(item1, item2) {
+        let i = item1[column];
+        let j = item2[column];
+        if (column == "Country") {
+          if (ascending) {
+            if (i < j) return -1;
+            if (i > j) return 1;
+            return 0;
+          } else {
+            if (i > j) return -1;
+            if (i < j) return 1;
+            return 0;
+          }
+        } else {
+          if (ascending) {
+            return i - j;
+          } else {
+            return j - i;
+          }
+        }
+      });
+      this.$store.commit('createCountries',sortedCountries)
     }
   }
 };

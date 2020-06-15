@@ -55,7 +55,6 @@ export default {
       let country = this.$store.state.countries.find(
         item => item.CountryCode == iso2Code
       )
-      console.log(country)
       if (country != undefined) {
         this.statistics = {
           name: data.properties.name,
